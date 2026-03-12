@@ -13,15 +13,17 @@ return new class extends Migration
     {
         Schema::create('category_mappings', function (Blueprint $table) {
             $table->id();
+            $table->string('provider');
             $table->string('raw_name');
             $table->foreignId('category_id')
+                ->nullable()
                 ->constrained('categories')
                 ->cascadeOnUpdate()
-                ->cascadeOnDelete();
+                ->nullOnDelete();
 
             $table->timestamps();
 
-            $table->index('category_id');
+            $table->unique(['provider', 'raw_name']);
         });
     }
 

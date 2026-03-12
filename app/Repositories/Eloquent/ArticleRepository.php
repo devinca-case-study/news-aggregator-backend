@@ -23,9 +23,4 @@ class ArticleRepository implements ArticleRepositoryContract
     {
         $article->categories()->syncWithoutDetaching([$categoryId]);
     }
-
-    public function attachUnmappedCategory(Article $article, int $unmappedCategoryId): void
-    {
-        $article->unmappedCategories()->syncWithoutDetaching([$unmappedCategoryId]);
-    }
 }

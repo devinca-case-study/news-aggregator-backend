@@ -2,19 +2,17 @@
 
 namespace App\Repositories\Eloquent;
 
-use App\Models\Category;
 use App\Models\CategoryMapping;
 use App\Repositories\Contracts\CategoryMappingRepositoryContract;
 
 class CategoryMappingRepository implements CategoryMappingRepositoryContract
 {
-    public function resolveCategory(string $rawCategory): ?Category
+    public function resolveCategoryMapping(string $providerName, string $rawCategory): ?CategoryMapping
     {
-        $mapping = CategoryMapping::query()
-            ->with('category')
-            ->where('raw_name', $rawCategory)
-            ->first();
-
-        return $mapping?->category;
+        $data = [
+            'provider' => $providerName,
+            'raw_name' => $rawCategory
+        ];
+        return CategoryMapping::query()->firstOrCreate($data, $data);
     }
 }

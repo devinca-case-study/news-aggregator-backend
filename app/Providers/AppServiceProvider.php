@@ -4,10 +4,8 @@ namespace App\Providers;
 
 use App\Repositories\Contracts\ArticleRepositoryContract;
 use App\Repositories\Contracts\CategoryMappingRepositoryContract;
-use App\Repositories\Contracts\UnmappedCategoryRepositoryContract;
 use App\Repositories\Eloquent\ArticleRepository;
 use App\Repositories\Eloquent\CategoryMappingRepository;
-use App\Repositories\Eloquent\UnmappedCategoryRepository;
 use App\Services\NewsAggregatorService;
 use App\Services\Providers\GuardianService;
 use App\Services\Providers\NewsApiService;
@@ -23,7 +21,6 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(ArticleRepositoryContract::class, ArticleRepository::class);
         $this->app->bind(CategoryMappingRepositoryContract::class, CategoryMappingRepository::class);
-        $this->app->bind(UnmappedCategoryRepositoryContract::class, UnmappedCategoryRepository::class);
         
         $this->app->when(NewsAggregatorService::class)
             ->needs('$providers')

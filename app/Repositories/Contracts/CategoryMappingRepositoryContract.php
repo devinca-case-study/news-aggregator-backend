@@ -2,9 +2,9 @@
 
 namespace App\Repositories\Contracts;
 
-use App\Models\Category;
+use App\Models\CategoryMapping;
 
 interface CategoryMappingRepositoryContract
 {
-    public function resolveCategory(string $rawCategory): ?Category;
+    public function resolveCategoryMapping(string $providerName, string $rawCategory): ?CategoryMapping;
 }

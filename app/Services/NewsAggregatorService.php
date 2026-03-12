@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Article;
 use App\Repositories\Contracts\ArticleRepositoryContract;
 use App\Repositories\Contracts\CategoryMappingRepositoryContract;
-use App\Repositories\Contracts\UnmappedCategoryRepositoryContract;
 use App\Services\Contracts\NewsProviderContract;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -17,7 +16,6 @@ class NewsAggregatorService
     public function __construct(
         protected ArticleRepositoryContract $articleRepository,
         protected CategoryMappingRepositoryContract $categoryMappingRepository,
-        protected UnmappedCategoryRepositoryContract $unmappedCategoryRepository,
         protected array $providers = [],
     ) {}
 
@@ -30,10 +28,10 @@ class NewsAggregatorService
         $count = 0;
 
         foreach ($articles as $articleData) {
-            DB::transaction(function () use ($articleData) {
+            DB::transaction(function () use ($articleData, $providerName) {
                 $article = $this->articleRepository->firstOrCreateFromFetchDto($articleData);
 
-                $this->attachCategory($article, $articleData->rawCategory);
+                $this->attachCategory($article, $providerName, $articleData->rawCategory);
             });
 
             $count++;
@@ -48,7 +46,7 @@ class NewsAggregatorService
         return $count;
     }
 
-    protected function attachCategory(Article $article, ?string $rawCategory): void
+    protected function attachCategory(Article $article, string $providerName, ?string $rawCategory): void
     {
         if (blank($rawCategory)) {
             return;
@@ -56,21 +54,17 @@ class NewsAggregatorService
 
         $rawCategory = Str::slug($rawCategory);
 
-        $category = $this->categoryMappingRepository->resolveCategory($rawCategory);
+        $categoryMapping = $this->categoryMappingRepository->resolveCategoryMapping($providerName, $rawCategory);
 
-        if ($category) {
-            $this->articleRepository->attachCategory($article, $category->id);
+        if ($categoryMapping->category_id) {
+            $this->articleRepository->attachCategory($article, $categoryMapping->category_id);
             return;
         } 
-
-        $unmappedCategory = $this->unmappedCategoryRepository->firstOrCreateAndMarkSeen($rawCategory);
-
-        $this->articleRepository->attachUnmappedCategory($article, $unmappedCategory->id);
 
         Log::warning('Unmapped category encountered', [
             'raw_category' => $rawCategory,
             'article_id' => $article->id,
-            'unmapped_category_id' => $unmappedCategory->id,
+            'category_mapping_id' => $categoryMapping->id,
         ]);
     }
 

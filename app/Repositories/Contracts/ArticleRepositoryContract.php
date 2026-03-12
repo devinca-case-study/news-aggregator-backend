@@ -10,6 +10,4 @@ interface ArticleRepositoryContract
     public function firstOrCreateFromFetchDto(ArticleFetchDto $dto): Article;
 
     public function attachCategory(Article $article, int $categoryId): void;
-
-    public function attachUnmappedCategory(Article $article, int $unmappedCategoryId): void;
 }

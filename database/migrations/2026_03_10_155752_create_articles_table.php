@@ -20,7 +20,7 @@ return new class extends Migration
             $table->text('url');
             $table->string('title');
             $table->longText('content')->nullable();
-            $table->string('author_name')->nullable();
+            $table->text('author_name')->nullable();
             $table->timestamp('published_at')->nullable();
             $table->timestamp('synced_at')->useCurrent();
             $table->json('meta')->nullable();

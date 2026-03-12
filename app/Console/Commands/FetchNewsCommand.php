@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Jobs\FetchArticlesJob;
+use App\Repositories\Contracts\CategoryMappingRepositoryContract;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -22,6 +23,12 @@ class FetchNewsCommand extends Command
      */
     protected $description = 'Dispatch news fetching jobs for a specific provider';
 
+    public function __construct(
+        protected CategoryMappingRepositoryContract $categoryMappingRepository
+    ) {
+        return parent::__construct();
+    }
+
     /**
      * Execute the console command.
      */
@@ -29,42 +36,52 @@ class FetchNewsCommand extends Command
     {
         $provider = (string) $this->argument('provider');
 
-        return match ($provider) {
-            'newsapi' => $this->handleNewsApi(),
-            'guardian' => $this->dispatchProvider('guardian'),
-            'nytimes' => $this->dispatchProvider('nytimes'),
-            default => $this->unsupportedProvider($provider),
-        };
-    }
+        if (!in_array($provider, ['newsapi', 'guardian', 'nytimes'], true)) {
+            return $this->unsupportedProvider($provider);
+        }
 
-    protected function handleNewsApi(): int
-    {
-        $categories = config('news.providers.newsapi.categories', []);
+        $category = $this->resolveRotationCategory($provider);
 
-        if (empty($categories)) {
-            $this->error('No NewsAPI categories configured.');
+        if (!$category) {
+            $this->error("No mapped categories configured for provider [{$provider}].");
 
             return self::FAILURE;
         }
-
-        $category = $this->resolveNewsApiRotationCategory($categories);
-
-        Log::info('NewsAPI rotation category resolved.', [
+        
+        Log::info("{$provider} rotation category resolved.", [
             'category' => $category,
         ]);
 
-        return $this->dispatchProvider('newsapi', [
+        return $this->dispatchProvider($provider, [
             'category' => $category,
         ]);
     }
 
-    protected function resolveNewsApiRotationCategory(array $categories): string
+    protected function resolveRotationCategory(string $provider): ?string
+    {
+        $categories = $this->categoryMappingRepository->getMappedCategoryCodesByProvider($provider);
+
+        if (empty($categories)) {
+            return null;
+        }
+
+        $rotationMinutes = $this->getRotationMinutes($provider);
+
+        return $this->resolveRotationValue($categories, $rotationMinutes);
+    }
+
+    protected function resolveRotationValue(array $categories, int $rotationMinutes): string
     {
         $minutesFromStartOfDay = now()->startOfDay()->diffInMinutes(now());
-        $slotIndex = (int)($minutesFromStartOfDay / 15);
+        $slotIndex = (int)($minutesFromStartOfDay / $rotationMinutes);
         $categoryIndex = $slotIndex % count($categories);
 
         return $categories[$categoryIndex];
+    }
+
+    protected function getRotationMinutes(string $provider): int
+    {
+        return (int) config("news.providers.{$provider}.rotation_minutes");
     }
 
     protected function dispatchProvider(string $provider, array $params = []): int

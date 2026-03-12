@@ -28,11 +28,9 @@ class NewsAggregatorService
         $count = 0;
 
         foreach ($articles as $articleData) {
-            DB::transaction(function () use ($articleData, $providerName) {
-                $article = $this->articleRepository->firstOrCreateFromFetchDto($articleData);
+            $article = $this->articleRepository->firstOrCreateFromFetchDto($articleData);
 
-                $this->attachCategory($article, $providerName, $articleData->rawCategory);
-            });
+            $this->attachCategory($article, $providerName, $articleData->rawCategory);
 
             $count++;
         }

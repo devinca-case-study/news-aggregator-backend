@@ -15,6 +15,11 @@ class NewsApiService extends AbstractNewsProvider implements NewsProviderContrac
         return 'newsapi';
     }
 
+    protected function endpoint(): string
+    {
+        return '/top-headlines';
+    }
+
     protected function http(): PendingRequest
     {
         return parent::http()->withHeaders([
@@ -22,40 +27,22 @@ class NewsApiService extends AbstractNewsProvider implements NewsProviderContrac
         ]);
     }
 
-    public function fetch(array $params = []): array
+    protected function buildRequestParams(array $rawNames, string $category, int $page): array
     {
-        $category = $params['category'] ?? null;
-
-        if (!$category) {
-            throw new RuntimeException('NewsAPI category is required.');
-        }
-
-        // NewsAPI has a rate limit of 100 requests per day on the free plan
-        // To stay within this limit, we only fetch the first page with pageSize=100
-        // The sync job runs every 15 minutes and rotates across 7 categories
-        // ensuring fresh news without exceeding the daily API quota
-        $response = $this->http()->get('/top-headlines', [
-            'category' => $category,
+        return [
+            'category' => $rawNames[0],
             'pageSize' => $this->config('page_size'),
-            'page' => 1
-        ]);
+            'page' => $page,
+        ];
+    }
 
-        $this->throwIfFailed($response);
-
-        $payload = $response->json();
-
+    protected function extractArticles(array $payload): array
+    {
         if (($payload['status'] ?? null) !== 'ok') {
             throw new RuntimeException('NewsAPI response status is not ok.');
         }
 
-        $articles = $payload['articles'] ?? [];
-        $syncedAt = now()->toDateTimeString();
-
-        return collect($articles)
-            ->map(fn ($article) => $this->mapArticle($article, $category, $syncedAt))
-            ->filter()
-            ->values()
-            ->all();
+        return $payload['articles'] ?? [];
     }
 
     protected function mapArticle(array $article, string $category, string $syncedAt): ?ArticleFetchDto

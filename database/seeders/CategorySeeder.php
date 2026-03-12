@@ -41,6 +41,14 @@ class CategorySeeder extends Seeder
                 'code' => 'technology',
                 'name' => 'Technology',
             ],
+            [
+                'code' => 'politics',
+                'name' => 'Politics',
+            ],
+            [
+                'code' => 'lifestyle',
+                'name' => 'Lifestyle',
+            ]
         ];
 
         foreach ($categories as $category) {

@@ -3,6 +3,7 @@
 namespace App\Repositories\Contracts;
 
 use App\Dto\ArticleFetchDto;
+use App\Dto\ArticleFilterDto;
 use App\Models\Article;
 
 interface ArticleRepositoryContract
@@ -10,4 +11,6 @@ interface ArticleRepositoryContract
     public function firstOrCreateFromFetchDto(ArticleFetchDto $dto, int $sourceId): Article;
 
     public function attachCategory(Article $article, int $categoryId): void;
+
+    public function paginateByFilter(ArticleFilterDto $dto);
 }

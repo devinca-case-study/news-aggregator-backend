@@ -11,7 +11,7 @@ class AuthorRepository implements AuthorRepositoryContract
     public function firstOrCreateByName(string $name): Author
     {
         return Author::query()->firstOrCreate([
-            'normalized_name' => Str::lower($name)
+            'code' => Str::slug($name)
         ], [
             'name' => $name
         ]);

@@ -8,6 +8,6 @@ class Author extends Model
 {
     protected $fillable = [
         'name',    
-        'normalized_name'
+        'code'
     ];
 }

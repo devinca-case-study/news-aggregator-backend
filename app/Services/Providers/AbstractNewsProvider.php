@@ -4,6 +4,7 @@ namespace App\Services\Providers;
 
 use App\Dto\ArticleFetchDto;
 use App\Repositories\Contracts\CategoryMappingRepositoryContract;
+use App\Support\StringHelper;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
@@ -155,5 +156,11 @@ abstract class AbstractNewsProvider
         }
 
         return $results;
+    }
+
+    protected function wrapSingleAuthor(?string $author): array
+    {
+        $author = StringHelper::clean($author);
+        return $author !== '' ? [$author] : [];
     }
 }

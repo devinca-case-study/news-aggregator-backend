@@ -7,7 +7,7 @@ use App\Models\Article;
 
 interface ArticleRepositoryContract
 {
-    public function firstOrCreateFromFetchDto(ArticleFetchDto $dto): Article;
+    public function firstOrCreateFromFetchDto(ArticleFetchDto $dto, int $sourceId): Article;
 
     public function attachCategory(Article $article, int $categoryId): void;
 }

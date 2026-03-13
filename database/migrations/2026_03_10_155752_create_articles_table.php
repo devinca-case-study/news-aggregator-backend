@@ -15,22 +15,24 @@ return new class extends Migration
             $table->id();
             $table->string('provider');
             $table->string('external_id');
-            $table->string('source_code');
-            $table->string('source_name');
+            
+            $table->foreignId('source_id')
+                ->constrained('sources')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
+
             $table->text('url');
             $table->string('title');
             $table->longText('content')->nullable();
-            $table->text('author_name')->nullable();
             $table->timestamp('published_at')->nullable();
             $table->timestamp('synced_at')->useCurrent();
             $table->json('meta')->nullable();
             $table->timestamps();
 
-            $table->unique(['source_code', 'external_id']);
-            $table->index('source_code');
+            $table->unique(['provider', 'external_id']);
+            $table->index('source_id');
             $table->index('published_at');
-            $table->index('author_name');
-            $table->index(['source_code', 'published_at']);
+            $table->index(['source_id', 'published_at']);
         });
     }
 

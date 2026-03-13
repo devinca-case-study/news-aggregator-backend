@@ -10,12 +10,10 @@ class Article extends Model
     protected $fillable = [
         'provider',
         'external_id',
-        'source_code',
-        'source_name',
+        'source_id',
         'url',
         'title',
         'content',
-        'author_name',
         'published_at',
         'synced_at',
         'meta'
@@ -30,5 +28,10 @@ class Article extends Model
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class, 'article_categories')->withTimestamps();
+    }
+
+    public function authors(): BelongsToMany
+    {
+        return $this->belongsToMany(Author::class, 'article_authors')->withTimestamps();
     }
 }

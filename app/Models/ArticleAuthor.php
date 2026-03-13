@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ArticleCategory extends Model
+class ArticleAuthor extends Model
 {
     protected $fillable = [
         'article_id',
-        'category_id'
+        'author_id'
     ];
 }

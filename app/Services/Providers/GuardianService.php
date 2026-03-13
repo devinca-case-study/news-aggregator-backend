@@ -4,6 +4,7 @@ namespace App\Services\Providers;
 
 use App\Dto\ArticleFetchDto;
 use App\Services\Contracts\NewsProviderContract;
+use App\Support\StringHelper;
 use Illuminate\Http\Client\PendingRequest;
 use RuntimeException;
 
@@ -49,27 +50,27 @@ class GuardianService extends AbstractNewsProvider implements NewsProviderContra
         return $response['results'] ?? [];
     }
 
-    protected function mapArticle(array $article, string $category, string $syncedAt): ?ArticleFetchDto
+    protected function extractGuardianAuthors(array $tags): array
     {
-        $url = trim((string)($article['webUrl'] ?? ''));
-
-        $tags = collect($article['tags'] ?? []);
-        $contributors = $tags
-            ->where('type', 'contributor')
-            ->pluck('webTitle')
+        return collect($tags)
+            ->filter(fn (array $tag) => data_get($tag, 'type') === 'contributor')
+            ->map(fn (array $tag) => StringHelper::clean(data_get($tag, 'webTitle')))
             ->filter()
+            ->unique()
             ->values()
             ->all();
+    }
 
+    protected function mapArticle(array $article, string $category, string $syncedAt): ?ArticleFetchDto
+    {
         return new ArticleFetchDto(
             provider: $this->providerName(),
             externalId: data_get($article, 'id'),
-            sourceCode: 'the-guardian',
             sourceName: 'The Guardian',
-            url: $url,
+            url: StringHelper::cleanUrl(data_get($article, 'webUrl')),
             title: data_get($article, 'webTitle'),
             content: data_get($article, 'fields.bodyText'),
-            authorName: !empty($contributors) ? implode(', ', $contributors) : null,
+            authors: $this->extractGuardianAuthors($article['tags'] ?? []),
             publishedAt: data_get($article, 'webPublicationDate'),
             syncedAt: $syncedAt,
             rawCategory: data_get($article, 'sectionId'),

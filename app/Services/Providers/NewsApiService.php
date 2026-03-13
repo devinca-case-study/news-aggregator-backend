@@ -4,6 +4,7 @@ namespace App\Services\Providers;
 
 use App\Dto\ArticleFetchDto;
 use App\Services\Contracts\NewsProviderContract;
+use App\Support\StringHelper;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
@@ -47,7 +48,7 @@ class NewsApiService extends AbstractNewsProvider implements NewsProviderContrac
 
     protected function mapArticle(array $article, string $category, string $syncedAt): ?ArticleFetchDto
     {
-        $url = trim((string)($article['url'] ?? ''));
+        $url = StringHelper::cleanUrl(data_get($article, 'url'));
 
         if ($url === '') {
             Log::warning('NewsAPI article skipped due to missing URL', [
@@ -57,22 +58,21 @@ class NewsApiService extends AbstractNewsProvider implements NewsProviderContrac
             return null;
         }
 
-        $sourceName = data_get($article, 'source.name');
-
         return new ArticleFetchDto(
             provider: $this->providerName(),
             externalId: md5($url), // Use MD5 hash of the URL as a unique article identifier in news api because they don't have unique id.
-            sourceCode: data_get($article, 'source.id') ?: $sourceName,
-            sourceName: $sourceName,
+            sourceName: trim((string)data_get($article, 'source.name')),
             url: $url,
             title: data_get($article, 'title'),
             content: data_get($article, 'content'),
-            authorName: data_get($article, 'author'),
+            authors: $this->wrapSingleAuthor(data_get($article, 'author')),
             publishedAt: data_get($article, 'publishedAt'),
             syncedAt: $syncedAt,
             rawCategory: $category,
             meta: [
-                'urlToImage' => data_get($article, 'urlToImage')
+                'urlToImage' => data_get($article, 'urlToImage'),
+                'sourceId' => data_get($article, 'source.id'),
+                'sourceName' => data_get($article, 'source.name')
             ]
         );
     }

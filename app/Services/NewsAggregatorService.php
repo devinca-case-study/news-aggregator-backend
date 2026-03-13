@@ -4,9 +4,10 @@ namespace App\Services;
 
 use App\Models\Article;
 use App\Repositories\Contracts\ArticleRepositoryContract;
+use App\Repositories\Contracts\AuthorRepositoryContract;
 use App\Repositories\Contracts\CategoryMappingRepositoryContract;
+use App\Repositories\Contracts\SourceRepositoryContract;
 use App\Services\Contracts\NewsProviderContract;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use RuntimeException;
@@ -15,6 +16,8 @@ class NewsAggregatorService
 {
     public function __construct(
         protected ArticleRepositoryContract $articleRepository,
+        protected AuthorRepositoryContract $authorRepository,
+        protected SourceRepositoryContract $sourceRepository,
         protected CategoryMappingRepositoryContract $categoryMappingRepository,
         protected array $providers = [],
     ) {}
@@ -28,9 +31,11 @@ class NewsAggregatorService
         $count = 0;
 
         foreach ($articles as $articleData) {
-            $article = $this->articleRepository->firstOrCreateFromFetchDto($articleData);
+            $source = $this->sourceRepository->firstOrCreateByName($articleData->sourceName);
+            $article = $this->articleRepository->firstOrCreateFromFetchDto($articleData, $source->id);
 
             $this->attachCategory($article, $providerName, $articleData->rawCategory);
+            $this->syncAuthors($article, $articleData->authors);
 
             $count++;
         }
@@ -42,6 +47,18 @@ class NewsAggregatorService
         ]);
 
         return $count;
+    }
+
+    protected function syncAuthors(Article $article, array $authors): void
+    {
+        $authorIds = [];
+        foreach ($authors as $authorName) {
+            if ($authorName !== '') {
+                $authorIds[] = $this->authorRepository->firstOrCreateByName($authorName)->id;
+            }
+        }
+
+        $article->authors()->sync($authorIds);
     }
 
     protected function attachCategory(Article $article, string $providerName, ?string $rawCategory): void

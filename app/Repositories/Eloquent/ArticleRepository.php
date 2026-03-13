@@ -8,15 +8,15 @@ use App\Repositories\Contracts\ArticleRepositoryContract;
 
 class ArticleRepository implements ArticleRepositoryContract
 {
-    public function firstOrCreateFromFetchDto(ArticleFetchDto $dto): Article
+    public function firstOrCreateFromFetchDto(ArticleFetchDto $dto, int $sourceId): Article
     {
-        return Article::query()->firstOrCreate(
-            [
-                'source_code' => $dto->sourceCode,
-                'external_id' => $dto->externalId,
-            ],
-            $dto->toArray()
-        );
+        return Article::query()->firstOrCreate([
+            'provider' => $dto->provider,
+            'external_id' => $dto->externalId,
+        ], [
+            ...$dto->toArray(),
+            'source_id' => $sourceId
+        ]);
     }
 
     public function attachCategory(Article $article, int $categoryId): void

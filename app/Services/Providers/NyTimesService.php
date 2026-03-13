@@ -4,6 +4,7 @@ namespace App\Services\Providers;
 
 use App\Dto\ArticleFetchDto;
 use App\Services\Contracts\NewsProviderContract;
+use App\Support\StringHelper;
 use Illuminate\Http\Client\PendingRequest;
 
 class NyTimesService extends AbstractNewsProvider implements NewsProviderContract
@@ -60,17 +61,14 @@ class NyTimesService extends AbstractNewsProvider implements NewsProviderContrac
 
     protected function mapArticle(array $article, string $category, string $syncedAt): ?ArticleFetchDto
     {
-        $url = trim((string)($article['web_url'] ?? ''));
-
         return new ArticleFetchDto(
             provider: $this->providerName(),
             externalId: data_get($article, '_id'),
-            sourceCode: 'the-new-york-times',
             sourceName: 'The New York Times',
-            url: $url,
+            url: StringHelper::cleanUrl(data_get($article, 'web_url')),
             title: data_get($article, 'headline.main'),
             content: data_get($article, 'abstract'),
-            authorName: data_get($article, 'byline.original'),
+            authors: $this->wrapSingleAuthor(data_get($article, 'byline.original')),
             publishedAt: data_get($article, 'pub_date'),
             syncedAt: $syncedAt,
             rawCategory: data_get($article, 'section_name'),

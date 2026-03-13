@@ -11,19 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('article_categories', function (Blueprint $table) {
+        Schema::create('article_authors', function (Blueprint $table) {
             $table->foreignId('article_id')
                 ->constrained('articles')
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
 
-            $table->foreignId('category_id')
-                ->constrained('categories')
+            $table->foreignId('author_id')
+                ->constrained('authors')
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
 
-            $table->primary(['article_id', 'category_id']);
-            $table->index(['category_id', 'article_id']);
+            $table->primary(['article_id', 'author_id']);
+            $table->index('author_id');
 
             $table->timestamps();
         });
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('article_categories');
+        Schema::dropIfExists('article_authors');
     }
 };

@@ -7,11 +7,13 @@ use App\Repositories\Contracts\AuthorRepositoryContract;
 use App\Repositories\Contracts\CategoryMappingRepositoryContract;
 use App\Repositories\Contracts\CategoryRepositoryContract;
 use App\Repositories\Contracts\SourceRepositoryContract;
+use App\Repositories\Contracts\UserPreferenceRepositoryContract;
 use App\Repositories\Eloquent\ArticleRepository;
 use App\Repositories\Eloquent\AuthorRepository;
 use App\Repositories\Eloquent\CategoryMappingRepository;
 use App\Repositories\Eloquent\CategoryRepository;
 use App\Repositories\Eloquent\SourceRepository;
+use App\Repositories\Eloquent\UserPreferenceRepository;
 use App\Services\NewsAggregatorService;
 use App\Services\Providers\GuardianService;
 use App\Services\Providers\NewsApiService;
@@ -30,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(SourceRepositoryContract::class, SourceRepository::class);
         $this->app->bind(CategoryRepositoryContract::class, CategoryRepository::class);
         $this->app->bind(CategoryMappingRepositoryContract::class, CategoryMappingRepository::class);
+        $this->app->bind(UserPreferenceRepositoryContract::class, UserPreferenceRepository::class);
         
         $this->app->when(NewsAggregatorService::class)
             ->needs('$providers')

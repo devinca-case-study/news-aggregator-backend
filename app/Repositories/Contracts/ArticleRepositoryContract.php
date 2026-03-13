@@ -13,4 +13,6 @@ interface ArticleRepositoryContract
     public function attachCategory(Article $article, int $categoryId): void;
 
     public function paginateByFilter(ArticleFilterDto $dto);
+
+    public function loadDetailRelations(Article $article): Article;
 }

@@ -23,7 +23,7 @@ class ArticleController extends Controller
 
     public function show(Article $article): ArticleResource
     {
-        $article->loadMissing(Article::DETAIL_RELATIONS);
+        $article = $this->articleService->getDetailArticle($article);
         return ArticleResource::make($article);
     }
 }

@@ -34,7 +34,7 @@ final class ArticleFilterDto
             page: $data['page'] ?? self::DEFAULT_PAGE,
             perPage: $data['per_page'] ?? self::DEFAULT_PER_PAGE,
             sortBy: $data['sort_by'] ?? self::DEFAULT_SORT_BY,
-            sortDirection: $data['author_ids'] ?? self::DEFAULT_SORT_DIRECTION,
+            sortDirection: $data['sort_direction'] ?? self::DEFAULT_SORT_DIRECTION,
         );
     }
 }

@@ -43,6 +43,11 @@ class ArticleRepository implements ArticleRepositoryContract
         );
     }
 
+    public function loadDetailRelations(Article $article): Article
+    {
+        return $article->loadMissing(Article::DETAIL_RELATIONS);
+    }
+
     protected function applySearch($query, ArticleFilterDto $dto): void
     {
         if (empty($dto->search)) {

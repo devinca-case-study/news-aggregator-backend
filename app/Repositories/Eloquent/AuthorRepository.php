@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\Author;
 use App\Repositories\Contracts\AuthorRepositoryContract;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class AuthorRepository implements AuthorRepositoryContract
@@ -15,5 +16,19 @@ class AuthorRepository implements AuthorRepositoryContract
         ], [
             'name' => $name
         ]);
+    }
+
+    public function searchForSelect(?string $search = null, int $limit = 10): Collection
+    {
+        if (empty($search)) {
+            return collect();
+        }
+
+        return Author::query()
+            ->select(['id', 'name'])
+            ->where('name', 'like', "%{$search}%")
+            ->orderBy('name')
+            ->limit($limit)
+            ->get();
     }
 }

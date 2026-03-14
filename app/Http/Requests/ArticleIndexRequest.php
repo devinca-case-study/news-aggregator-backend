@@ -33,8 +33,8 @@ class ArticleIndexRequest extends FormRequest
             'author_ids.*' => ['integer', 'distinct', 'exists:authors,id'],
             'page' => ['nullable', 'integer', 'min:1'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
-            'sort_by' => ['nullable', 'in:published_at,title'],
-            'sort_direction' => ['nullable', 'in:asc,desc']
+            'sort_by' => ['nullable', 'required_with:sort_direction', 'in:published_at,title'],
+            'sort_direction' => ['nullable', 'required_with:sort_by', 'in:asc,desc']
         ];
     }
 }

@@ -140,9 +140,9 @@ class ArticleRepository implements ArticleRepositoryContract
             $ids = implode(',', $categoryIds);
             $scoreParts[] = "
                 CASE WHEN EXISTS (
-                    SELECT 1 FROM article_category
-                    WHERE article_category.article_id = articles.id
-                    AND article_category.category_id IN ($ids)
+                    SELECT 1 FROM article_categories
+                    WHERE article_categories.article_id = articles.id
+                    AND article_categories.category_id IN ($ids)
                 ) THEN 1 ELSE 0 END
             ";
         }
@@ -151,9 +151,9 @@ class ArticleRepository implements ArticleRepositoryContract
             $ids = implode(',', $authorIds);
             $scoreParts[] = "
                 CASE WHEN EXISTS (
-                    SELECT 1 FROM article_author
-                    WHERE article_author.article_id = articles.id
-                    AND article_author.author_id IN ($ids)
+                    SELECT 1 FROM article_authors
+                    WHERE article_authors.article_id = articles.id
+                    AND article_authors.author_id IN ($ids)
                 ) THEN 1 ELSE 0 END
             ";
         }

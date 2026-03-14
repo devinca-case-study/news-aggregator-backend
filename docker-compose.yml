@@ -7,10 +7,38 @@ services:
     working_dir: /var/www
     ports:
       - "8000:8000"
-    command: php artisan serve --host=0.0.0.0 --port=8000
+    command: sh -c "php artisan config:clear && php artisan serve --host=0.0.0.0 --port=8000"
     depends_on:
       - mysql
       - redis
+    networks:
+      - app-network
+
+  horizon:
+    build: .
+    container_name: laravel_horizon
+    volumes:
+      - .:/var/www
+    working_dir: /var/www
+    command: sh -c "php artisan config:clear && php artisan horizon"
+    depends_on:
+      - mysql
+      - redis
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  scheduler:
+    build: .
+    container_name: laravel_scheduler
+    volumes:
+      - .:/var/www
+    working_dir: /var/www
+    command: sh -c "php artisan config:clear && php artisan schedule:work"
+    depends_on:
+      - mysql
+      - redis
+    restart: unless-stopped
     networks:
       - app-network
 

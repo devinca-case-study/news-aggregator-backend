@@ -15,6 +15,9 @@ A backend service that aggregates news from multiple providers (NewsAPI, Guardia
 - Cache / Queue
   Redis
 
+- Queue Management
+  Laravel Horizon
+
 - Containerization
   Docker
 
@@ -44,7 +47,8 @@ A backend service that aggregates news from multiple providers (NewsAPI, Guardia
     - categories
     - authors
 - Scheduled background news ingestion
-- Queue-based job processing
+- Queue-based job processing using Redis
+- Queue monitoring via Laravel Horizon
 - Swagger API documentation
 
 ---
@@ -57,13 +61,13 @@ The application uses a layered architecture to separate responsibilities.
   Handle HTTP requests and responses.
 
 - Services
-  Contain business logic.
+  Contain business logic and orchestrate data flow between layers.
 
 - Repositories
-  Handle database access.
+  Handle database interactions and persistence logic.
 
 - DTO Layer
-  Normalize external provider responses.
+  Normalize and transform responses from external news providers into a consistent internal structure.
 
 # News Fetching Strategy
 
@@ -118,24 +122,43 @@ Main tables:
 # Installation
 
 1. Clone repository
-   git clone https://github.com/devincalmt/news-aggregator-backend
-   cd news-aggregator-backend
+
+```
+git clone https://github.com/devincalmt/news-aggregator-backend
+cd news-aggregator-backend
+```
 
 2. Setup environment
-   cp .env.example .env
-   Edit database credentials if necessary.
+
+```
+cp .env.example .env
+```
+
+Edit database credentials if necessary.
 
 3. Start Docker
-   docker compose up -d --build
+
+```
+docker compose up -d --build
+```
 
 4. Install dependencies
-   docker compose exec app composer install
+
+```
+docker compose exec app composer install
+```
 
 5. Generate application key
-   docker compose exec app php artisan key:generate
+
+```
+docker compose exec app php artisan key:generate
+```
 
 6. Run migration and seed
-   docker compose exec app php artisan migrate --seed
+
+```
+docker compose exec app php artisan migrate --seed
+```
 
 # API Documentation
 
@@ -145,15 +168,50 @@ http://localhost:8000/api/documentation
 
 # Scheduler
 
-The scheduler is responsible for dispatching news fetching jobs.
+The scheduler dispatches background jobs responsible for fetching news from external providers.
 
+In the Docker environment, the scheduler runs continuously inside the scheduler container using:
+
+```
 php artisan schedule:work
+```
 
-# Queue Worker
+This process checks scheduled tasks every second and dispatches jobs when their execution time is reached.
 
-Background jobs are processed using Redis queues.
+# Queue Processing
 
+Background jobs are processed using Redis queues and managed by Laravel Horizon.
+
+Horizon runs inside the horizon container and automatically processes queued jobs.
+
+```
 php artisan queue:work
+```
+
+The Horizon dashboard is available at:
+
+http://localhost:8000/horizon
+
+# Job Processing Flow
+
+```
+Scheduler (schedule:work)
+          │
+          ▼
+   Dispatch Fetch Jobs
+          │
+          ▼
+     Redis Queue
+          │
+          ▼
+    Horizon Workers
+          │
+          ▼
+Fetch News From Providers
+          │
+          ▼
+Normalize + Store Articles
+```
 
 # Design Decisions
 

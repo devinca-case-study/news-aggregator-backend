@@ -147,7 +147,7 @@ Main tables:
 1. Clone repository
 
 ```
-git clone https://github.com/devincalmt/news-aggregator-backend
+git clone https://github.com/devinca-case-study/news-aggregator-backend/
 cd news-aggregator-backend
 ```
 

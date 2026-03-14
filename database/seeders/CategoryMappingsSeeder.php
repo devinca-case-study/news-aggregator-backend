@@ -7,7 +7,7 @@ use App\Models\CategoryMapping;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
-class CategoryMappingSeeder extends Seeder
+class CategoryMappingsSeeder extends Seeder
 {
     /**
      * Run the database seeds.

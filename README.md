@@ -274,3 +274,56 @@ Normalize + Store Articles
 - Admin management for category mappings
   Category mappings are currently defined via seed data. In a production system, this could be managed through an admin interface to allow dynamic updates without requiring application redeployment.
   
+# External API Keys
+
+This project fetches news from several external providers.
+To run the ingestion jobs, you must obtain API keys from the following services.
+
+--------------------------------------------------
+
+1. NewsAPI
+
+- Visit the website:
+  https://newsapi.org/register
+- Create a free account.
+- After registration, copy your API key from the dashboard.
+- Add it to your .env file:
+
+```
+NEWSAPI_BASE_URL=https://newsapi.org/v2
+NEWSAPI_KEY=your_api_key_here
+```
+
+Free tier limit: 100 requests per day
+
+--------------------------------------------------
+
+2. The Guardian Open Platform
+
+- Visit:
+  https://open-platform.theguardian.com/access/
+- Click "Register developer key" and register.
+- Copy your key and add it to .env:
+
+```
+GUARDIAN_BASE_URL=https://content.guardianapis.com
+GUARDIAN_KEY=your_api_key_here
+```
+
+Free tier limit: 500 requests per day
+
+--------------------------------------------------
+
+3. New York Times Developer API
+
+- Visit:
+  https://developer.nytimes.com/get-started
+- Create an account and create a new app.
+- Copy the generated API key and add it to .env:
+
+```
+NYTIMES_BASE_URL=https://api.nytimes.com/svc
+NYTIMES_KEY=your_api_key_here
+```
+
+Free tier limit: 500 requests per day

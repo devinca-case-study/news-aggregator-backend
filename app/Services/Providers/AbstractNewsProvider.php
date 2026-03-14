@@ -44,21 +44,6 @@ abstract class AbstractNewsProvider
         return $this->config('api_key');
     }
 
-    protected function firstPage(): int
-    {
-        return 1;
-    }
-
-    protected function lastPage(): int
-    {
-        return $this->firstPage() + $this->config('total_page', 1) - 1;
-    }
-
-    protected function sleepSecondsBetweenPages(): int
-    {
-        return 0;
-    }
-
     protected function throwIfFailed(Response $response): void
     {
         if ($response->failed()) {
@@ -107,51 +92,20 @@ abstract class AbstractNewsProvider
         $rawNames = $this->getRawNamesByCategory($category);
         $syncedAt = now()->toDateTimeString();
 
-        $results = [];
-        $page = $this->firstPage();
+        $page = $params['page'] ?? 1;
 
-        // Stop pagination on failure to avoid repeated errors (rate limit, API issues).
-        // Return the articles successfully fetched so far.
-        while (true) {
-            try {
-                $response = $this->makeRequest($rawNames, $category, $page);
+        $response = $this->makeRequest($rawNames, $category, $page);
 
-                if ($response->failed()) {
-                    Log::warning("{$this->providerName()} request failed", [
-                        'page' => $page,
-                        'status' => $response->status(),
-                        'body' => $response->body(),
-                    ]);
-                    break;
-                }
+        $this->throwIfFailed($response);
 
-                $payload = $response->json();
-                $articles = $this->extractArticles($payload);
+        $payload = $response->json();
+        $articles = $this->extractArticles($payload);
 
-                foreach ($articles as $article) {
-                    $mapped = $this->mapArticle($article, $category, $syncedAt);
+        foreach ($articles as $article) {
+            $mapped = $this->mapArticle($article, $category, $syncedAt);
 
-                    if ($mapped) {
-                        $results[] = $mapped;
-                    }
-                }
-
-                if (count($articles) == 0 || $page >= $this->lastPage()) {
-                    break;
-                }
-
-                $sleepSeconds = $this->sleepSecondsBetweenPages();
-                if ($sleepSeconds > 0) {
-                    sleep($sleepSeconds);
-                }
-
-                $page++;
-            } catch (Throwable $th) {
-                Log::error("{$this->providerName()} fetch failed", [
-                    'page' => $page,
-                    'message' => $th->getMessage(),
-                ]);
-                break;
+            if ($mapped) {
+                $results[] = $mapped;
             }
         }
 

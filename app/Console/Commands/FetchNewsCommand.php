@@ -52,9 +52,7 @@ class FetchNewsCommand extends Command
             'category' => $category,
         ]);
 
-        return $this->dispatchProvider($provider, [
-            'category' => $category,
-        ]);
+        return $this->dispatchProvider($provider, $category);
     }
 
     protected function resolveRotationCategory(string $provider): ?string
@@ -81,13 +79,33 @@ class FetchNewsCommand extends Command
 
     protected function getRotationMinutes(string $provider): int
     {
-        return (int) config("news.providers.{$provider}.rotation_minutes");
+        return (int)config("news.providers.{$provider}.rotation_minutes");
     }
 
-    protected function dispatchProvider(string $provider, array $params = []): int
+    protected function dispatchProvider(string $provider, string $category): int
     {
-        FetchArticlesJob::dispatch($provider, $params);
-        
+        $totalPages = $this->getTotalPages($provider);
+        $firstPage = $this->getFirstPage($provider);
+
+        $delaySeconds = (int)config("news.providers.{$provider}.rate_limit_delay", 0);
+
+        for ($page = $firstPage; $page < $firstPage + $totalPages; $page++) {
+            $delay = $delaySeconds
+                ? now()->addSeconds(($page - $firstPage) * $delaySeconds)
+                : null;
+
+            FetchArticlesJob::dispatch($provider, [
+                'category' => $category,
+                'page' => $page
+            ])->delay($delay);
+        }
+
+        Log::info("{$provider} jobs dispatched.", [
+            'total_pages' => $totalPages,
+            'first_page' => $firstPage,
+            'category' => $category,
+        ]);
+
         return self::SUCCESS;
     }
 
@@ -96,5 +114,20 @@ class FetchNewsCommand extends Command
         $this->error("Unsupported provider: {$provider}");
 
         return self::FAILURE;
+    }
+
+    protected function getTotalPages(string $provider): int
+    {
+        return (int) config("news.providers.{$provider}.total_page", 1);
+    }
+
+    protected function getFirstPage(string $provider): int
+    {
+        // NYTimes uses 0-based pagination, others use 1-based
+        if ($provider === 'nytimes') {
+            return 0;
+        }
+
+        return 1;
     }
 }

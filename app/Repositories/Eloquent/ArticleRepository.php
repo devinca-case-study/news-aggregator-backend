@@ -5,6 +5,7 @@ namespace App\Repositories\Eloquent;
 use App\Dto\ArticleFetchDto;
 use App\Dto\ArticleFilterDto;
 use App\Models\Article;
+use App\Models\User;
 use App\Repositories\Contracts\ArticleRepositoryContract;
 
 class ArticleRepository implements ArticleRepositoryContract
@@ -25,7 +26,7 @@ class ArticleRepository implements ArticleRepositoryContract
         $article->categories()->syncWithoutDetaching([$categoryId]);
     }
 
-    public function paginateByFilter(ArticleFilterDto $dto)
+    public function paginateByFilter(ArticleFilterDto $dto, ?User $user = null)
     {
         $query = Article::query()->with(Article::DETAIL_RELATIONS);
 
@@ -34,6 +35,11 @@ class ArticleRepository implements ArticleRepositoryContract
         $this->applySourceFilter($query, $dto);
         $this->applyCategoryFilter($query, $dto);
         $this->applyAuthorFilter($query, $dto);
+
+        if ($user) {
+            $this->applyPreferenceRanking($query, $user);
+            $query->orderByDesc('preference_score');
+        }
 
         $query->orderBy($dto->sortBy, $dto->sortDirection);
 
@@ -115,5 +121,50 @@ class ArticleRepository implements ArticleRepositoryContract
         $query->whereHas('authors', function ($query) use ($authorIds) {
             $query->whereIn('authors.id', $authorIds);
         });
+    }
+
+    protected function applyPreferenceRanking($query, User $user): void
+    {
+        $sourceIds = $user->preferredSources()->pluck('sources.id')->all();
+        $categoryIds = $user->preferredCategories()->pluck('categories.id')->all();
+        $authorIds = $user->preferredAuthors()->pluck('authors.id')->all();
+
+        $scoreParts = [];
+
+        if (!empty($sourceIds)) {
+            $ids = implode(',', $sourceIds);
+            $scoreParts[] = "CASE WHEN articles.source_id IN ($ids) THEN 1 ELSE 0 END";
+        }
+
+        if (!empty($categoryIds)) {
+            $ids = implode(',', $categoryIds);
+            $scoreParts[] = "
+                CASE WHEN EXISTS (
+                    SELECT 1 FROM article_category
+                    WHERE article_category.article_id = articles.id
+                    AND article_category.category_id IN ($ids)
+                ) THEN 1 ELSE 0 END
+            ";
+        }
+
+        if (!empty($authorIds)) {
+            $ids = implode(',', $authorIds);
+            $scoreParts[] = "
+                CASE WHEN EXISTS (
+                    SELECT 1 FROM article_author
+                    WHERE article_author.article_id = articles.id
+                    AND article_author.author_id IN ($ids)
+                ) THEN 1 ELSE 0 END
+            ";
+        }
+
+        if (empty($scoreParts)) {
+            $query->selectRaw("0 as preference_score");
+            return;
+        }
+
+        $scoreExpression = implode(' + ', $scoreParts);
+
+        $query->selectRaw("articles.*, ($scoreExpression) as preference_score");
     }
 }

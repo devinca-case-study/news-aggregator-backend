@@ -17,7 +17,7 @@ class ArticleController extends Controller
     public function index(ArticleIndexRequest $request)
     {
         $dto = ArticleFilterDto::fromArray($request->validated());
-        $articles = $this->articleService->getPaginatedArticles($dto);
+        $articles = $this->articleService->getPaginatedArticles($dto, auth('sanctum')->user());
         return ArticleResource::collection($articles);
     }
 

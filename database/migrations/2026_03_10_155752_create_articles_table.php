@@ -22,7 +22,7 @@ return new class extends Migration
                 ->restrictOnDelete();
 
             $table->text('url');
-            $table->string('title');
+            $table->text('title');
             $table->longText('content')->nullable();
             $table->timestamp('published_at')->nullable();
             $table->timestamp('synced_at')->useCurrent();

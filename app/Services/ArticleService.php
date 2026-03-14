@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Dto\ArticleFilterDto;
 use App\Models\Article;
+use App\Models\User;
 use App\Repositories\Contracts\ArticleRepositoryContract;
 
 class ArticleService
@@ -12,9 +13,9 @@ class ArticleService
         protected ArticleRepositoryContract $articleRepository,
     ) {}
 
-    public function getPaginatedArticles(ArticleFilterDto $dto)
+    public function getPaginatedArticles(ArticleFilterDto $dto, ?User $user)
     {
-        return $this->articleRepository->paginateByFilter($dto);
+        return $this->articleRepository->paginateByFilter($dto, $user);
     }
 
     public function getDetailArticle(Article $article): Article

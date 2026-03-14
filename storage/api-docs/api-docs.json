@@ -51,7 +51,7 @@
                         }
                     },
                     {
-                        "name": "category_ids",
+                        "name": "category_ids[]",
                         "in": "query",
                         "description": "Filter by category IDs",
                         "required": false,
@@ -63,7 +63,7 @@
                         }
                     },
                     {
-                        "name": "source_ids",
+                        "name": "source_ids[]",
                         "in": "query",
                         "description": "Filter by source IDs",
                         "required": false,
@@ -75,7 +75,7 @@
                         }
                     },
                     {
-                        "name": "author_ids",
+                        "name": "author_ids[]",
                         "in": "query",
                         "description": "Filter by author IDs",
                         "required": false,

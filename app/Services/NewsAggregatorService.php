@@ -69,18 +69,13 @@ class NewsAggregatorService
 
         $rawCategory = Str::slug($rawCategory);
 
-        $categoryMapping = $this->categoryMappingRepository->resolveCategoryMapping($providerName, $rawCategory);
+        $categoryMapping = $this->categoryMappingRepository->findCategoryMapping($providerName, $rawCategory);
 
-        if ($categoryMapping->category_id) {
-            $this->articleRepository->attachCategory($article, $categoryMapping->category_id);
+        if (!$categoryMapping?->category_id) {
             return;
-        } 
+        }
 
-        Log::warning('Unmapped category encountered', [
-            'raw_category' => $rawCategory,
-            'article_id' => $article->id,
-            'category_mapping_id' => $categoryMapping->id,
-        ]);
+        $this->articleRepository->attachCategory($article, $categoryMapping->category_id);
     }
 
     protected function getProviderService(string $providerName): NewsProviderContract

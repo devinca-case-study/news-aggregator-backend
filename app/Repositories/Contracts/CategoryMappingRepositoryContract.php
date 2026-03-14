@@ -6,7 +6,7 @@ use App\Models\CategoryMapping;
 
 interface CategoryMappingRepositoryContract
 {
-    public function resolveCategoryMapping(string $providerName, string $rawCategory): ?CategoryMapping;
+    public function findCategoryMapping(string $providerName, string $rawCategory): ?CategoryMapping;
 
     public function getMappedCategoryCodesByProvider(string $provider): array;
 

@@ -49,7 +49,7 @@ class ArticleController extends Controller
      *         @OA\Schema(type="string", format="date")
      *     ),
      *     @OA\Parameter(
-     *         name="category_ids",
+     *         name="category_ids[]",
      *         in="query",
      *         description="Filter by category IDs",
      *         required=false,
@@ -59,7 +59,7 @@ class ArticleController extends Controller
      *         )
      *     ),
      *     @OA\Parameter(
-     *         name="source_ids",
+     *         name="source_ids[]",
      *         in="query",
      *         description="Filter by source IDs",
      *         required=false,
@@ -69,7 +69,7 @@ class ArticleController extends Controller
      *         )
      *     ),
      *     @OA\Parameter(
-     *         name="author_ids",
+     *         name="author_ids[]",
      *         in="query",
      *         description="Filter by author IDs",
      *         required=false,

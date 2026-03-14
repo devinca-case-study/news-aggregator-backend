@@ -9,15 +9,24 @@ use App\Repositories\Contracts\ArticleRepositoryContract;
 
 class ArticleRepository implements ArticleRepositoryContract
 {
-    public function firstOrCreateFromFetchDto(ArticleFetchDto $dto, int $sourceId): Article
+    public function updateOrCreateFromFetchDto(ArticleFetchDto $dto, int $sourceId): Article
     {
-        return Article::query()->firstOrCreate([
+        // Use updateOrCreate because ingestion runs continuously and providers may revise existing articles.
+        // Content is only updated when a non-empty value is received to avoid overwriting previously stored data.
+
+        $data = [
+            ...$dto->toArray(),
+            'source_id' => $sourceId,
+        ];
+
+        if (empty($dto->content)) {
+            unset($data['content']);
+        }
+
+        return Article::query()->updateOrCreate([
             'provider' => $dto->provider,
             'external_id' => $dto->externalId,
-        ], [
-            ...$dto->toArray(),
-            'source_id' => $sourceId
-        ]);
+        ], $data);
     }
 
     public function attachCategory(Article $article, int $categoryId): void
@@ -79,11 +88,11 @@ class ArticleRepository implements ArticleRepositoryContract
     protected function applyDateFilter($query, ArticleFilterDto $dto): void
     {
         if ($dto->dateFrom) {
-            $query->whereDate('published_at', '>=', $dto->dateFrom);
+            $query->where('published_at', '>=', $dto->dateFrom);
         }
 
         if ($dto->dateTo) {
-            $query->whereDate('published_at', '<=', $dto->dateTo);
+            $query->where('published_at', '<=', $dto->dateTo);
         }
     }
 

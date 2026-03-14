@@ -472,7 +472,7 @@
                     "Filters"
                 ],
                 "summary": "Search authors",
-                "description": "\r\n     Returns author suggestions for article filtering.\r\n \r\n     Results are only returned when a search query is provided.\r\n \r\n     If limit is not specified, a default of 10 results will be returned.\r\n     ",
+                "description": "\n     Returns author suggestions for article filtering.\n \n     Results are only returned when a search query is provided.\n \n     If limit is not specified, a default of 10 results will be returned.\n     ",
                 "operationId": "1c8daa3d9f89695e8782b015405c66fe",
                 "parameters": [
                     {

@@ -69,12 +69,31 @@ The application uses a layered architecture to separate responsibilities.
 - DTO Layer
   Normalize and transform responses from external news providers into a consistent internal structure.
 
+---
+
+# Request Flow
+
+ Client Request
+      │
+      ▼
+  Controller
+      │
+      ▼
+ Service Layer
+      │
+      ▼
+Repository Layer
+      │
+      ▼
+   Database
+
+---
+
 # News Fetching Strategy
 
 News ingestion is handled via scheduled background jobs.
 
-Each provider has its own fetch rotation strategy designed
-to stay within the free API rate limits.
+Each provider has its own fetch rotation strategy designed to stay within the free API rate limits.
 
 Provider Usage Overview
 
@@ -98,6 +117,8 @@ Provider Usage Overview
 
 This configuration intentionally uses only ~50–60% of the available API limits to provide buffer space and avoid rate limiting.
 
+---
+
 # Database Structure
 
 Main tables:
@@ -118,6 +139,8 @@ Main tables:
   store user preference by sources
 - user_preferences_authors
   store user preference by authors
+
+---
 
 # Installation
 
@@ -178,6 +201,8 @@ php artisan schedule:work
 
 This process checks scheduled tasks every second and dispatches jobs when their execution time is reached.
 
+---
+
 # Queue Processing
 
 Background jobs are processed using Redis queues and managed by Laravel Horizon.
@@ -191,6 +216,8 @@ php artisan queue:work
 The Horizon dashboard is available at:
 
 http://localhost:8000/horizon
+
+---
 
 # Job Processing Flow
 
@@ -227,6 +254,8 @@ Normalize + Store Articles
 - Redis Queue
   External API ingestion is handled via background jobs to avoid blocking application requests.
 
+---
+
 # Scalability Considerations
 
 - Provider abstraction
@@ -237,3 +266,11 @@ Normalize + Store Articles
 
 - Database normalization
   Authors, sources, and categories are stored separately to reduce duplication and improve query performance.
+
+---
+
+# Future Improvements
+
+- Admin management for category mappings
+  Category mappings are currently defined via seed data. In a production system, this could be managed through an admin interface to allow dynamic updates without requiring application redeployment.
+  

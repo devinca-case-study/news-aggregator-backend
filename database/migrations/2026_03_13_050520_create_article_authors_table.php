@@ -23,7 +23,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             $table->primary(['article_id', 'author_id']);
-            $table->index('author_id');
+            $table->index(['author_id', 'article_id']);
 
             $table->timestamps();
         });

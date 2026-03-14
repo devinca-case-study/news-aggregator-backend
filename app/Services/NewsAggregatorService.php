@@ -32,7 +32,7 @@ class NewsAggregatorService
 
         foreach ($articles as $articleData) {
             $source = $this->sourceRepository->firstOrCreateByName($articleData->sourceName);
-            $article = $this->articleRepository->firstOrCreateFromFetchDto($articleData, $source->id);
+            $article = $this->articleRepository->updateOrCreateFromFetchDto($articleData, $source->id);
 
             $this->attachCategory($article, $providerName, $articleData->rawCategory);
             $this->syncAuthors($article, $articleData->authors);

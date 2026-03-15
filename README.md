@@ -210,7 +210,7 @@ Background jobs are processed using Redis queues and managed by Laravel Horizon.
 Horizon runs inside the horizon container and automatically processes queued jobs.
 
 ```
-php artisan queue:work
+php artisan horizon
 ```
 
 The Horizon dashboard is available at:
@@ -327,3 +327,17 @@ NYTIMES_KEY=your_api_key_here
 ```
 
 Free tier limit: 500 requests per day
+
+## Testing
+
+Feature tests are included to verify core API behavior:
+
+- Authentication endpoints (register, login)
+- Article filtering by search, category, and source
+- User preference ranking for personalized article results
+
+Run the test suite using:
+
+```
+php artisan test
+```

@@ -35,12 +35,7 @@ class FilterController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Success"),
-     *             @OA\Property(property="data", type="array",
-     *                 @OA\Items(
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="name", type="string", example="Technology")
-     *                 )
-     *             ),
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Category")),
      *             @OA\Property(property="meta", type="object", example={})
      *         )
      *     )
@@ -84,12 +79,7 @@ class FilterController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Success"),
-     *             @OA\Property(property="data", type="array",
-     *                 @OA\Items(
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="name", type="string", example="John Smith")
-     *                 )
-     *             ),
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Author")),
      *             @OA\Property(property="meta", type="object", example={})
      *         )
      *     )
@@ -131,12 +121,7 @@ class FilterController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Success"),
-     *             @OA\Property(property="data", type="array",
-     *                 @OA\Items(
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="name", type="string", example="Tech News")
-     *                 )
-     *             ),
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Source")),
      *             @OA\Property(property="meta", type="object", example={})
      *         )
      *     )

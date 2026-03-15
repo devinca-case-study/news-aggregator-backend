@@ -512,17 +512,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "name": {
-                                                        "type": "string",
-                                                        "example": "Technology"
-                                                    }
-                                                },
-                                                "type": "object"
+                                                "$ref": "#/components/schemas/Category"
                                             }
                                         },
                                         "meta": {
@@ -586,17 +576,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "name": {
-                                                        "type": "string",
-                                                        "example": "John Smith"
-                                                    }
-                                                },
-                                                "type": "object"
+                                                "$ref": "#/components/schemas/Author"
                                             }
                                         },
                                         "meta": {
@@ -660,17 +640,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "name": {
-                                                        "type": "string",
-                                                        "example": "Tech News"
-                                                    }
-                                                },
-                                                "type": "object"
+                                                "$ref": "#/components/schemas/Source"
                                             }
                                         },
                                         "meta": {
@@ -709,67 +679,7 @@
                                             "example": "Success"
                                         },
                                         "data": {
-                                            "properties": {
-                                                "categories": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 1
-                                                            },
-                                                            "name": {
-                                                                "type": "string",
-                                                                "example": "Technology"
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
-                                                },
-                                                "sources": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 1
-                                                            },
-                                                            "name": {
-                                                                "type": "string",
-                                                                "example": "Tech News"
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
-                                                },
-                                                "authors": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 1
-                                                            },
-                                                            "name": {
-                                                                "type": "string",
-                                                                "example": "John Smith"
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
-                                                },
-                                                "preferences_completed_at": {
-                                                    "type": "string",
-                                                    "format": "date-time",
-                                                    "example": "2024-01-01T00:00:00Z",
-                                                    "nullable": true
-                                                },
-                                                "is_preferences_completed": {
-                                                    "type": "boolean",
-                                                    "example": true
-                                                }
-                                            },
-                                            "type": "object"
+                                            "$ref": "#/components/schemas/UserPreference"
                                         },
                                         "meta": {
                                             "type": "object",
@@ -858,66 +768,7 @@
                                             "example": "Success"
                                         },
                                         "data": {
-                                            "properties": {
-                                                "categories": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 1
-                                                            },
-                                                            "name": {
-                                                                "type": "string",
-                                                                "example": "Technology"
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
-                                                },
-                                                "sources": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 1
-                                                            },
-                                                            "name": {
-                                                                "type": "string",
-                                                                "example": "Tech News"
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
-                                                },
-                                                "authors": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "example": 1
-                                                            },
-                                                            "name": {
-                                                                "type": "string",
-                                                                "example": "John Smith"
-                                                            }
-                                                        },
-                                                        "type": "object"
-                                                    }
-                                                },
-                                                "preferences_completed_at": {
-                                                    "type": "string",
-                                                    "format": "date-time",
-                                                    "example": "2024-01-01T00:00:00Z"
-                                                },
-                                                "is_preferences_completed": {
-                                                    "type": "boolean",
-                                                    "example": true
-                                                }
-                                            },
-                                            "type": "object"
+                                            "$ref": "#/components/schemas/UserPreference"
                                         },
                                         "meta": {
                                             "type": "object",
@@ -947,16 +798,8 @@
     "components": {
         "schemas": {
             "Article": {
-                "required": [
-                    "id",
-                    "provider",
-                    "external_id",
-                    "url",
-                    "title",
-                    "content",
-                    "published_at",
-                    "synced_at"
-                ],
+                "title": "Article",
+                "description": "Article resource",
                 "properties": {
                     "id": {
                         "type": "integer",
@@ -968,60 +811,62 @@
                     },
                     "external_id": {
                         "type": "string",
-                        "example": "article-123"
+                        "example": "12345"
                     },
                     "url": {
                         "type": "string",
-                        "format": "uri",
                         "example": "https://example.com/article"
                     },
                     "title": {
                         "type": "string",
-                        "example": "Article Title"
+                        "example": "Breaking News: Tech Advances"
                     },
                     "content": {
                         "type": "string",
-                        "example": "Article content..."
+                        "example": "Article content here..."
                     },
                     "published_at": {
                         "type": "string",
                         "format": "date-time",
-                        "example": "2024-01-01T00:00:00Z"
+                        "example": "2024-01-01T12:00:00Z"
                     },
                     "synced_at": {
                         "type": "string",
                         "format": "date-time",
-                        "example": "2024-01-01T01:00:00Z"
+                        "example": "2024-01-01T12:00:00Z"
                     },
                     "meta": {
                         "type": "object",
                         "example": []
                     },
                     "source": {
-                        "$ref": "#/components/schemas/Source"
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Source"
+                            }
+                        ],
+                        "nullable": true
                     },
                     "categories": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Category"
-                        }
+                        },
+                        "example": []
                     },
                     "authors": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Author"
-                        }
+                        },
+                        "example": []
                     }
                 },
                 "type": "object"
             },
             "AuthUser": {
-                "required": [
-                    "id",
-                    "name",
-                    "email",
-                    "is_preferences_completed"
-                ],
+                "title": "Auth User",
+                "description": "Authenticated user resource",
                 "properties": {
                     "id": {
                         "type": "integer",
@@ -1029,12 +874,12 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "John Doe"
+                        "example": "Jane Doe"
                     },
                     "email": {
                         "type": "string",
                         "format": "email",
-                        "example": "john@example.com"
+                        "example": "jane@example.com"
                     },
                     "is_preferences_completed": {
                         "type": "boolean",
@@ -1043,11 +888,9 @@
                 },
                 "type": "object"
             },
-            "Source": {
-                "required": [
-                    "id",
-                    "name"
-                ],
+            "Author": {
+                "title": "Author",
+                "description": "Author resource",
                 "properties": {
                     "id": {
                         "type": "integer",
@@ -1055,16 +898,14 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "Tech News"
+                        "example": "John Smith"
                     }
                 },
                 "type": "object"
             },
             "Category": {
-                "required": [
-                    "id",
-                    "name"
-                ],
+                "title": "Category",
+                "description": "Category resource",
                 "properties": {
                     "id": {
                         "type": "integer",
@@ -1077,11 +918,9 @@
                 },
                 "type": "object"
             },
-            "Author": {
-                "required": [
-                    "id",
-                    "name"
-                ],
+            "Source": {
+                "title": "Source",
+                "description": "Source resource",
                 "properties": {
                     "id": {
                         "type": "integer",
@@ -1089,7 +928,60 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "John Smith"
+                        "example": "Tech News"
+                    }
+                },
+                "type": "object"
+            },
+            "UserPreference": {
+                "title": "User Preference",
+                "description": "User preferences resource",
+                "properties": {
+                    "categories": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Category"
+                        },
+                        "example": [
+                            {
+                                "id": 1,
+                                "name": "Technology"
+                            }
+                        ]
+                    },
+                    "sources": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Source"
+                        },
+                        "example": [
+                            {
+                                "id": 1,
+                                "name": "Tech News"
+                            }
+                        ]
+                    },
+                    "authors": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Author"
+                        },
+                        "example": [
+                            {
+                                "id": 1,
+                                "name": "John Smith"
+                            }
+                        ]
+                    },
+                    "preferences_completed_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T00:00:00Z",
+                        "nullable": true
+                    },
+                    "is_preferences_completed": {
+                        "type": "boolean",
+                        "example": true
                     }
                 },
                 "type": "object"

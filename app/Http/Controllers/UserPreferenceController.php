@@ -34,22 +34,7 @@ class UserPreferenceController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Success"),
-     *             @OA\Property(property="data", type="object",
-     *                 @OA\Property(property="categories", type="array", @OA\Items(
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="name", type="string", example="Technology")
-     *                 )),
-     *                 @OA\Property(property="sources", type="array", @OA\Items(
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="name", type="string", example="Tech News")
-     *                 )),
-     *                 @OA\Property(property="authors", type="array", @OA\Items(
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="name", type="string", example="John Smith")
-     *                 )),
-     *                 @OA\Property(property="preferences_completed_at", type="string", format="date-time", nullable=true, example="2024-01-01T00:00:00Z"),
-     *                 @OA\Property(property="is_preferences_completed", type="boolean", example=true)
-     *             ),
+     *             @OA\Property(property="data", ref="#/components/schemas/UserPreference"),
      *             @OA\Property(property="meta", type="object", example={})
      *         )
      *     ),
@@ -100,22 +85,7 @@ class UserPreferenceController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Success"),
-     *             @OA\Property(property="data", type="object",
-     *                 @OA\Property(property="categories", type="array", @OA\Items(
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="name", type="string", example="Technology")
-     *                 )),
-     *                 @OA\Property(property="sources", type="array", @OA\Items(
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="name", type="string", example="Tech News")
-     *                 )),
-     *                 @OA\Property(property="authors", type="array", @OA\Items(
-     *                     @OA\Property(property="id", type="integer", example=1),
-     *                     @OA\Property(property="name", type="string", example="John Smith")
-     *                 )),
-     *                 @OA\Property(property="preferences_completed_at", type="string", format="date-time", example="2024-01-01T00:00:00Z"),
-     *                 @OA\Property(property="is_preferences_completed", type="boolean", example=true)
-     *             ),
+     *             @OA\Property(property="data", ref="#/components/schemas/UserPreference"),
      *             @OA\Property(property="meta", type="object", example={})
      *         )
      *     ),

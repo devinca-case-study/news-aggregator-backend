@@ -4,7 +4,19 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(
+ *     schema="AuthUser",
+ *     title="Auth User",
+ *     description="Authenticated user resource",
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="name", type="string", example="Jane Doe"),
+ *     @OA\Property(property="email", type="string", format="email", example="jane@example.com"),
+ *     @OA\Property(property="is_preferences_completed", type="boolean", example=true)
+ * )
+ */
 class AuthUserResource extends JsonResource
 {
     /**

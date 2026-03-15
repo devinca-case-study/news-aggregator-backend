@@ -4,7 +4,17 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Schema(
+ *     schema="Category",
+ *     title="Category",
+ *     description="Category resource",
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="name", type="string", example="Technology")
+ * )
+ */
 class CategoryResource extends JsonResource
 {
     /**

@@ -22,6 +22,7 @@ return new class extends Migration
                 ->restrictOnDelete();
 
             $table->text('url');
+            $table->text('image_url')->nullable();
             $table->text('title');
             $table->longText('content')->nullable();
             $table->timestamp('published_at')->nullable();

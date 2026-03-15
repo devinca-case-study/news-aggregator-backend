@@ -13,6 +13,7 @@ class Article extends Model
         'external_id',
         'source_id',
         'url',
+        'image_url',
         'title',
         'content',
         'published_at',

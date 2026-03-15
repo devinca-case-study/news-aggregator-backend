@@ -66,9 +66,10 @@ class NyTimesService extends AbstractNewsProvider implements NewsProviderContrac
             externalId: data_get($article, '_id'),
             sourceName: 'The New York Times',
             url: StringHelper::cleanUrl(data_get($article, 'web_url')),
+            imageUrl: data_get($article, 'multimedia.thumbnail.url'),
             title: data_get($article, 'headline.main'),
             content: data_get($article, 'abstract'),
-            authors: $this->wrapSingleAuthor(data_get($article, 'byline.original')),
+            authors: $this->wrapMultipleAuthors($this->cleanNyTimesByline(data_get($article, 'byline.original'))),
             publishedAt: data_get($article, 'pub_date'),
             syncedAt: $syncedAt,
             rawCategory: data_get($article, 'section_name'),
@@ -83,5 +84,18 @@ class NyTimesService extends AbstractNewsProvider implements NewsProviderContrac
                 'uri' => data_get($article, 'uri'),
             ]
         );
+    }
+
+    // NYTimes sometimes prefixes author with "By " or "Interviews by "
+    protected function cleanNyTimesByline(?string $byline): string
+    {
+        if (empty($byline)) {
+            return '';
+        }
+
+        // Remove common NY Times byline prefixes
+        $byline = preg_replace('/^(By |Interviews by )/i', '', $byline);
+
+        return trim($byline);
     }
 }

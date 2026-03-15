@@ -35,7 +35,7 @@ class GuardianService extends AbstractNewsProvider implements NewsProviderContra
             'page' => $page,
             'order-by' => 'newest',
             'show-tags' => 'contributor',
-            'show-fields' => 'bodyText',
+            'show-fields' => 'bodyText,thumbnail',
         ];
     }
 
@@ -68,6 +68,7 @@ class GuardianService extends AbstractNewsProvider implements NewsProviderContra
             externalId: data_get($article, 'id'),
             sourceName: 'The Guardian',
             url: StringHelper::cleanUrl(data_get($article, 'webUrl')),
+            imageUrl: data_get($article, 'fields.thumbnail'),
             title: data_get($article, 'webTitle'),
             content: data_get($article, 'fields.bodyText'),
             authors: $this->extractGuardianAuthors($article['tags'] ?? []),

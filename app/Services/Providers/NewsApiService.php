@@ -63,14 +63,14 @@ class NewsApiService extends AbstractNewsProvider implements NewsProviderContrac
             externalId: md5($url), // Use MD5 hash of the URL as a unique article identifier in news api because they don't have unique id.
             sourceName: trim((string)data_get($article, 'source.name')),
             url: $url,
+            imageUrl: data_get($article, 'urlToImage'),
             title: data_get($article, 'title'),
             content: data_get($article, 'content'),
-            authors: $this->wrapSingleAuthor(data_get($article, 'author')),
+            authors: $this->wrapMultipleAuthors(data_get($article, 'author')),
             publishedAt: data_get($article, 'publishedAt'),
             syncedAt: $syncedAt,
             rawCategory: $category,
             meta: [
-                'urlToImage' => data_get($article, 'urlToImage'),
                 'sourceId' => data_get($article, 'source.id'),
                 'sourceName' => data_get($article, 'source.name')
             ]

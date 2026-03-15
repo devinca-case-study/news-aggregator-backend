@@ -8,9 +8,7 @@ use App\Support\StringHelper;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use RuntimeException;
-use Throwable;
 
 abstract class AbstractNewsProvider
 {
@@ -112,9 +110,18 @@ abstract class AbstractNewsProvider
         return $results;
     }
 
-    protected function wrapSingleAuthor(?string $author): array
+    // NewsAPI sometimes returns authors separated by ", " or " | "
+    // NYTimes sometimes separate multiple authors using ", "
+    protected function wrapMultipleAuthors(?string $author): array
     {
         $author = StringHelper::clean($author);
-        return $author !== '' ? [$author] : [];
+
+        if ($author === '') {
+            return [];
+        }
+
+        $authors = array_map('trim', preg_split('/,|\|/', $author));
+
+        return array_filter($authors, fn($name) => $name !== '');
     }
 }

@@ -32,9 +32,9 @@ class ArticlesSeeder extends Seeder
                 'title' => "Sample Article Title {$i}",
                 'content' => "This is sample content for article {$i}. It is used for testing filtering and ranking.",
                 'published_at' => now()->subDays(rand(0, 10)),
-                'meta' => json_encode([
+                'meta' => [
                     'seeded' => true
-                ])
+                ]
             ]);
 
             $article->categories()->attach(

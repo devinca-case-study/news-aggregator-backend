@@ -817,6 +817,10 @@
                         "type": "string",
                         "example": "https://example.com/article"
                     },
+                    "image_url": {
+                        "type": "string",
+                        "example": "https://picsum.photos/200"
+                    },
                     "title": {
                         "type": "string",
                         "example": "Breaking News: Tech Advances"

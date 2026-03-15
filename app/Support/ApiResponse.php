@@ -17,6 +17,20 @@ class ApiResponse
         ], $status);
     }
 
+    public static function error(string $message = 'Error', int $status = 400, mixed $errors = null): JsonResponse
+    {
+        $response = [
+            'success' => false,
+            'message' => $message,
+        ];
+
+        if ($errors !== null) {
+            $response['errors'] = $errors;
+        }
+
+        return response()->json($response, $status);
+    }
+
     public static function paginated(LengthAwarePaginator $paginator, string $message = 'Success'): JsonResponse
     {
         return response()->json([

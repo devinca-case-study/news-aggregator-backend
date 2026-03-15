@@ -7,6 +7,8 @@ use App\Http\Requests\ArticleIndexRequest;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
 use App\Services\ArticleService;
+use App\Support\ApiResponse;
+use Illuminate\Http\JsonResponse;
 use OpenApi\Annotations as OA;
 
 /**
@@ -111,18 +113,28 @@ class ArticleController extends Controller
      *         description="Successful response",
      *         @OA\JsonContent(
      *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Success"),
      *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Article")),
-     *             @OA\Property(property="meta", type="object", @OA\Property(property="current_page", type="integer")),
-     *             @OA\Property(property="links", type="object")
+     *             @OA\Property(property="meta", type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=10),
+     *                 @OA\Property(property="per_page", type="integer", example=20),
+     *                 @OA\Property(property="total", type="integer", example=200)
+     *             )
      *         )
      *     )
      * )
      */
-    public function index(ArticleIndexRequest $request)
+    public function index(ArticleIndexRequest $request): JsonResponse
     {
         $dto = ArticleFilterDto::fromArray($request->validated());
         $articles = $this->articleService->getPaginatedArticles($dto, auth('sanctum')->user());
-        return ArticleResource::collection($articles);
+
+        $collection = ArticleResource::collection($articles);
+        $articles->setCollection($collection->collection);
+
+        return ApiResponse::paginated($articles);
     }
 
     /**
@@ -140,7 +152,12 @@ class ArticleController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Successful response",
-     *         @OA\JsonContent(ref="#/components/schemas/Article")
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Success"),
+     *             @OA\Property(property="data", ref="#/components/schemas/Article"),
+     *             @OA\Property(property="meta", type="object", example={})
+     *         )
      *     ),
      *     @OA\Response(
      *         response=404,
@@ -148,9 +165,9 @@ class ArticleController extends Controller
      *     )
      * )
      */
-    public function show(Article $article): ArticleResource
+    public function show(Article $article): JsonResponse
     {
         $article = $this->articleService->getDetailArticle($article);
-        return ArticleResource::make($article);
+        return ApiResponse::success(ArticleResource::make($article));
     }
 }

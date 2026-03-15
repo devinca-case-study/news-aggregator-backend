@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserPreferenceUpdateRequest;
 use App\Http\Resources\UserPreferenceResource;
 use App\Services\UserPreferenceService;
+use App\Support\ApiResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use OpenApi\Annotations as OA;
 
@@ -30,20 +32,25 @@ class UserPreferenceController extends Controller
      *         response=200,
      *         description="Successful response",
      *         @OA\JsonContent(
-     *             @OA\Property(property="categories", type="array", @OA\Items(
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="Technology")
-     *             )),
-     *             @OA\Property(property="sources", type="array", @OA\Items(
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="Tech News")
-     *             )),
-     *             @OA\Property(property="authors", type="array", @OA\Items(
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="John Smith")
-     *             )),
-     *             @OA\Property(property="preferences_completed_at", type="string", format="date-time", nullable=true, example="2024-01-01T00:00:00Z"),
-     *             @OA\Property(property="is_preferences_completed", type="boolean", example=true)
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Success"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="categories", type="array", @OA\Items(
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="name", type="string", example="Technology")
+     *                 )),
+     *                 @OA\Property(property="sources", type="array", @OA\Items(
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="name", type="string", example="Tech News")
+     *                 )),
+     *                 @OA\Property(property="authors", type="array", @OA\Items(
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="name", type="string", example="John Smith")
+     *                 )),
+     *                 @OA\Property(property="preferences_completed_at", type="string", format="date-time", nullable=true, example="2024-01-01T00:00:00Z"),
+     *                 @OA\Property(property="is_preferences_completed", type="boolean", example=true)
+     *             ),
+     *             @OA\Property(property="meta", type="object", example={})
      *         )
      *     ),
      *     @OA\Response(
@@ -52,10 +59,10 @@ class UserPreferenceController extends Controller
      *     )
      * )
      */    
-    public function show(Request $request): UserPreferenceResource
+    public function show(Request $request): JsonResponse
     {
         $user = $this->userPreferenceService->getUserPreferences($request->user());
-        return UserPreferenceResource::make($user);
+        return ApiResponse::success(UserPreferenceResource::make($user));
     }
 
     /**
@@ -91,20 +98,25 @@ class UserPreferenceController extends Controller
      *         response=200,
      *         description="Preferences updated successfully",
      *         @OA\JsonContent(
-     *             @OA\Property(property="categories", type="array", @OA\Items(
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="Technology")
-     *             )),
-     *             @OA\Property(property="sources", type="array", @OA\Items(
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="Tech News")
-     *             )),
-     *             @OA\Property(property="authors", type="array", @OA\Items(
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="John Smith")
-     *             )),
-     *             @OA\Property(property="preferences_completed_at", type="string", format="date-time", example="2024-01-01T00:00:00Z"),
-     *             @OA\Property(property="is_preferences_completed", type="boolean", example=true)
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Success"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="categories", type="array", @OA\Items(
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="name", type="string", example="Technology")
+     *                 )),
+     *                 @OA\Property(property="sources", type="array", @OA\Items(
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="name", type="string", example="Tech News")
+     *                 )),
+     *                 @OA\Property(property="authors", type="array", @OA\Items(
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="name", type="string", example="John Smith")
+     *                 )),
+     *                 @OA\Property(property="preferences_completed_at", type="string", format="date-time", example="2024-01-01T00:00:00Z"),
+     *                 @OA\Property(property="is_preferences_completed", type="boolean", example=true)
+     *             ),
+     *             @OA\Property(property="meta", type="object", example={})
      *         )
      *     ),
      *     @OA\Response(
@@ -117,13 +129,13 @@ class UserPreferenceController extends Controller
      *     )
      * )
      */    
-    public function update(UserPreferenceUpdateRequest $request): UserPreferenceResource
+    public function update(UserPreferenceUpdateRequest $request): JsonResponse
     {
         $user = $this->userPreferenceService->saveUserPreferences(
             $request->user(),
             $request->validated()
         );
 
-        return UserPreferenceResource::make($user);
+        return ApiResponse::success(UserPreferenceResource::make($user));
     }
 }

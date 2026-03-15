@@ -7,6 +7,8 @@ use App\Http\Resources\AuthorResource;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\SourceResource;
 use App\Services\FilterService;
+use App\Support\ApiResponse;
+use Illuminate\Http\JsonResponse;
 use OpenApi\Annotations as OA;
 
 /**
@@ -31,18 +33,23 @@ class FilterController extends Controller
      *         response=200,
      *         description="Successful response",
      *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="Technology")
-     *             )
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Success"),
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="name", type="string", example="Technology")
+     *                 )
+     *             ),
+     *             @OA\Property(property="meta", type="object", example={})
      *         )
      *     )
      * )
      */
-    public function categories()
+    public function categories(): JsonResponse
     {
-        return CategoryResource::collection($this->filterService->getCategories());
+        $categories = $this->filterService->getCategories();
+        return ApiResponse::success(CategoryResource::collection($categories));
     }
 
     /**
@@ -75,23 +82,27 @@ class FilterController extends Controller
      *         response=200,
      *         description="Successful response",
      *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="John Smith")
-     *             )
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Success"),
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="name", type="string", example="John Smith")
+     *                 )
+     *             ),
+     *             @OA\Property(property="meta", type="object", example={})
      *         )
      *     )
      * )
      */
-    public function authors(OptionSearchRequest $request)
+    public function authors(OptionSearchRequest $request): JsonResponse
     {
-        return AuthorResource::collection(
-            $this->filterService->searchAuthorsForSelect(
-                search: $request->validated('search'),
-                limit: $request->validated('limit', 10),
-            )
+        $authors = $this->filterService->searchAuthorsForSelect(
+            search: $request->validated('search'),
+            limit: $request->validated('limit', 10),
         );
+
+        return ApiResponse::success(AuthorResource::collection($authors));
     }
 
     /**
@@ -118,22 +129,26 @@ class FilterController extends Controller
      *         response=200,
      *         description="Successful response",
      *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="Tech News")
-     *             )
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Success"),
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="name", type="string", example="Tech News")
+     *                 )
+     *             ),
+     *             @OA\Property(property="meta", type="object", example={})
      *         )
      *     )
      * )
      */
-    public function sources(OptionSearchRequest $request)
+    public function sources(OptionSearchRequest $request): JsonResponse
     {
-        return SourceResource::collection(
-            $this->filterService->searchSourcesForSelect(
-                search: $request->validated('search'),
-                limit: $request->validated('limit'),
-            )
+        $sources = $this->filterService->searchSourcesForSelect(
+            search: $request->validated('search'),
+            limit: $request->validated('limit'),
         );
+
+        return ApiResponse::success(SourceResource::collection($sources));
     }
 }

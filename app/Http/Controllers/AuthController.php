@@ -6,9 +6,9 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\AuthUserResource;
 use App\Services\AuthService;
+use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use OpenApi\Annotations as OA;
 
 /**
@@ -42,12 +42,14 @@ class AuthController extends Controller
      *         response=201,
      *         description="Registration successful",
      *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Register successful."),
      *             @OA\Property(property="data", type="object",
      *                 @OA\Property(property="user", ref="#/components/schemas/AuthUser"),
      *                 @OA\Property(property="token", type="string", example="1|abc123..."),
      *                 @OA\Property(property="token_type", type="string", example="Bearer")
-     *             )
+     *             ),
+     *             @OA\Property(property="meta", type="object", example={})
      *         )
      *     ),
      *     @OA\Response(
@@ -60,14 +62,11 @@ class AuthController extends Controller
     {
         $result = $this->authService->register($request->validated());
 
-        return response()->json([
-            'message' => 'Register successful.',
-            'data' => [
-                'user' => new AuthUserResource($result['user']),
-                'token' => $result['token'],
-                'token_type' => 'Bearer',
-            ],
-        ], Response::HTTP_CREATED);
+        return ApiResponse::created([
+            'user' => new AuthUserResource($result['user']),
+            'token' => $result['token'],
+            'token_type' => 'Bearer',
+        ], 'Register successful.');
     }
 
     /**
@@ -87,12 +86,14 @@ class AuthController extends Controller
      *         response=200,
      *         description="Login successful",
      *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="Login successful."),
      *             @OA\Property(property="data", type="object",
      *                 @OA\Property(property="user", ref="#/components/schemas/AuthUser"),
      *                 @OA\Property(property="token", type="string", example="1|abc123..."),
      *                 @OA\Property(property="token_type", type="string", example="Bearer")
-     *             )
+     *             ),
+     *             @OA\Property(property="meta", type="object", example={})
      *         )
      *     ),
      *     @OA\Response(
@@ -109,14 +110,11 @@ class AuthController extends Controller
     {
         $result = $this->authService->login($request->validated());
 
-        return response()->json([
-            'message' => 'Login successful.',
-            'data' => [
-                'user' => new AuthUserResource($result['user']),
-                'token' => $result['token'],
-                'token_type' => 'Bearer',
-            ],
-        ]);
+        return ApiResponse::success([
+            'user' => new AuthUserResource($result['user']),
+            'token' => $result['token'],
+            'token_type' => 'Bearer',
+        ], 'Login successful.');
     }
 
     /**
@@ -126,11 +124,8 @@ class AuthController extends Controller
      *     tags={"Authentication"},
      *     security={{"sanctum": {}}},
      *     @OA\Response(
-     *         response=200,
-     *         description="Logout successful",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Logout successful.")
-     *         )
+     *         response=204,
+     *         description="Logout successful"
      *     ),
      *     @OA\Response(
      *         response=401,
@@ -142,9 +137,7 @@ class AuthController extends Controller
     {
         $this->authService->logout($request->user());
 
-        return response()->json([
-            'message' => 'Logout successful.'
-        ]);
+        return ApiResponse::noContent();
     }
 
     /**
@@ -156,7 +149,12 @@ class AuthController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Successful response",
-     *         @OA\JsonContent(ref="#/components/schemas/AuthUser")
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Success"),
+     *             @OA\Property(property="data", ref="#/components/schemas/AuthUser"),
+     *             @OA\Property(property="meta", type="object", example={})
+     *         )
      *     ),
      *     @OA\Response(
      *         response=401,
@@ -164,8 +162,8 @@ class AuthController extends Controller
      *     )
      * )
      */
-    public function me(Request $request): AuthUserResource
+    public function me(Request $request): JsonResponse
     {
-        return new AuthUserResource($request->user());
+        return ApiResponse::success(new AuthUserResource($request->user()));
     }
 }

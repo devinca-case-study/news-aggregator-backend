@@ -18,17 +18,21 @@ class AuthorRepository implements AuthorRepositoryContract
         ]);
     }
 
-    public function searchForSelect(?string $search = null, int $limit = 10): Collection
+    public function searchForSelect(?string $search = null, int $limit = 10, ?array $excludeIds = null): Collection
     {
         if (empty($search)) {
             return collect();
         }
 
-        return Author::query()
+        $query = Author::query()
             ->select(['id', 'name'])
             ->where('name', 'like', "%{$search}%")
-            ->orderBy('name')
-            ->limit($limit)
-            ->get();
+            ->orderBy('name');
+
+        if (!empty($excludeIds)) {
+            $query->whereNotIn('id', $excludeIds);
+        }
+
+        return $query->limit($limit)->get();
     }
 }

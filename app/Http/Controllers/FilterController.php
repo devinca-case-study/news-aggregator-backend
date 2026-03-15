@@ -52,11 +52,11 @@ class FilterController extends Controller
      *     path="/filters/authors",
      *     summary="Search authors",
      *     description="
-     Returns author suggestions for article filtering.
- 
-     Results are only returned when a search query is provided.
- 
-     If limit is not specified, a default of 10 results will be returned.
+    Returns author suggestions for article filtering.
+
+    Results are only returned when a search query is provided. If limit is not specified, a default of 10 results will be returned.
+
+    An optional exclude_ids parameter may be used for combobox or multi-select interfaces to hide authors that have already been selected. For example, when selected authors are shown as chips above the search input, exclude_ids ensures the dropdown only shows authors that have not yet been chosen, reducing duplicate selection and simplifying frontend handling.
      ",
      *     tags={"Filters"},
      *     @OA\Parameter(
@@ -72,6 +72,16 @@ class FilterController extends Controller
      *         description="Limit number of results (default: 10)",
      *         required=false,
      *         @OA\Schema(type="integer", minimum=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="exclude_ids[]",
+     *         in="query",
+     *         description="Exclude author IDs from results",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="array",
+     *             @OA\Items(type="integer")
+     *         )
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -90,6 +100,7 @@ class FilterController extends Controller
         $authors = $this->filterService->searchAuthorsForSelect(
             search: $request->validated('search'),
             limit: $request->validated('limit', 10),
+            excludeIds: $request->validated('exclude_ids'),
         );
 
         return ApiResponse::success(AuthorResource::collection($authors));
@@ -99,7 +110,13 @@ class FilterController extends Controller
      * @OA\Get(
      *     path="/filters/sources",
      *     summary="Search sources",
-     *     description="Returns source options for article filtering. Since the number of sources is relatively moderate, all sources are returned by default to simplify frontend filtering. Optional search and limit parameters can be used to narrow or limit the results.",
+     *     description="
+    Returns source options for article filtering.
+    
+    Since the number of sources is relatively moderate, all sources are returned by default to simplify frontend filtering. Optional search and limit parameters can be used to narrow or limit the results.
+    
+    An optional exclude_ids parameter may be used for combobox or multi-select interfaces to hide sources that have already been selected. For example, when selected sources are displayed as chips above the input, exclude_ids helps prevent the same source from appearing again in the dropdown suggestions.
+     ",
      *     tags={"Filters"},
      *     @OA\Parameter(
      *         name="search",
@@ -114,6 +131,16 @@ class FilterController extends Controller
      *         description="Limit number of results",
      *         required=false,
      *         @OA\Schema(type="integer", minimum=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="exclude_ids[]",
+     *         in="query",
+     *         description="Exclude source IDs from results",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="array",
+     *             @OA\Items(type="integer")
+     *         )
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -132,6 +159,7 @@ class FilterController extends Controller
         $sources = $this->filterService->searchSourcesForSelect(
             search: $request->validated('search'),
             limit: $request->validated('limit'),
+            excludeIds: $request->validated('exclude_ids'),
         );
 
         return ApiResponse::success(SourceResource::collection($sources));

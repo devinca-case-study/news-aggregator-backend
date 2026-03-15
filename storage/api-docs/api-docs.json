@@ -534,7 +534,7 @@
                     "Filters"
                 ],
                 "summary": "Search authors",
-                "description": "\r\n     Returns author suggestions for article filtering.\r\n \r\n     Results are only returned when a search query is provided.\r\n \r\n     If limit is not specified, a default of 10 results will be returned.\r\n     ",
+                "description": "\r\n    Returns author suggestions for article filtering.\r\n\r\n    Results are only returned when a search query is provided. If limit is not specified, a default of 10 results will be returned.\r\n\r\n    An optional exclude_ids parameter may be used for combobox or multi-select interfaces to hide authors that have already been selected. For example, when selected authors are shown as chips above the search input, exclude_ids ensures the dropdown only shows authors that have not yet been chosen, reducing duplicate selection and simplifying frontend handling.\r\n     ",
                 "operationId": "1c8daa3d9f89695e8782b015405c66fe",
                 "parameters": [
                     {
@@ -555,6 +555,18 @@
                         "schema": {
                             "type": "integer",
                             "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "exclude_ids[]",
+                        "in": "query",
+                        "description": "Exclude author IDs from results",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
                         }
                     }
                 ],
@@ -598,7 +610,7 @@
                     "Filters"
                 ],
                 "summary": "Search sources",
-                "description": "Returns source options for article filtering. Since the number of sources is relatively moderate, all sources are returned by default to simplify frontend filtering. Optional search and limit parameters can be used to narrow or limit the results.",
+                "description": "\r\n    Returns source options for article filtering.\r\n    \r\n    Since the number of sources is relatively moderate, all sources are returned by default to simplify frontend filtering. Optional search and limit parameters can be used to narrow or limit the results.\r\n    \r\n    An optional exclude_ids parameter may be used for combobox or multi-select interfaces to hide sources that have already been selected. For example, when selected sources are displayed as chips above the input, exclude_ids helps prevent the same source from appearing again in the dropdown suggestions.\r\n     ",
                 "operationId": "cb450ae51cfb0f4bd08a122df3bee57e",
                 "parameters": [
                     {
@@ -619,6 +631,18 @@
                         "schema": {
                             "type": "integer",
                             "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "exclude_ids[]",
+                        "in": "query",
+                        "description": "Exclude source IDs from results",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
                         }
                     }
                 ],

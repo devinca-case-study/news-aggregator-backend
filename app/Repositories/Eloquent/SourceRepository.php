@@ -18,7 +18,7 @@ class SourceRepository implements SourceRepositoryContract
         ]);
     }
 
-    public function searchForSelect(?string $search = null, ?int $limit = null): Collection
+    public function searchForSelect(?string $search = null, ?int $limit = null, ?array $excludeIds = null): Collection
     {
         $query = Source::query()
             ->select(['id', 'name'])
@@ -26,6 +26,10 @@ class SourceRepository implements SourceRepositoryContract
 
         if (!empty($search)) {
             $query->where('name', 'like', "%{$search}%");
+        }
+
+        if (!empty($excludeIds)) {
+            $query->whereNotIn('id', $excludeIds);
         }
 
         if (!empty($limit)) {

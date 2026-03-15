@@ -9,5 +9,5 @@ interface SourceRepositoryContract
 {
     public function firstOrCreateByName(string $name): Source;
 
-    public function searchForSelect(?string $search = null, ?int $limit = null): Collection;
+    public function searchForSelect(?string $search = null, ?int $limit = null, ?array $excludeIds = null): Collection;
 }

@@ -24,6 +24,8 @@ class OptionSearchRequest extends FormRequest
         return [
             'search' => ['nullable', 'string', 'max:255'],
             'limit' => ['nullable', 'integer', 'min:1'],
+            'exclude_ids' => ['nullable', 'array'],
+            'exclude_ids.*' => ['integer'],
         ];
     }
 }

@@ -20,13 +20,13 @@ class FilterService
         return $this->categoryRepository->all();
     }
 
-    public function searchAuthorsForSelect(?string $search = null, int $limit = 10): Collection
+    public function searchAuthorsForSelect(?string $search = null, int $limit = 10, ?array $excludeIds = null): Collection
     {
-        return $this->authorRepository->searchForSelect($search, $limit);
+        return $this->authorRepository->searchForSelect($search, $limit, $excludeIds);
     }
 
-    public function searchSourcesForSelect(?string $search = null, ?int $limit = null): Collection
+    public function searchSourcesForSelect(?string $search = null, ?int $limit = null, ?array $excludeIds = null): Collection
     {
-        return $this->sourceRepository->searchForSelect($search, $limit);
+        return $this->sourceRepository->searchForSelect($search, $limit, $excludeIds);
     }
 }

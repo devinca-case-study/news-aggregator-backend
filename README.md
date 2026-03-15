@@ -73,6 +73,7 @@ The application uses a layered architecture to separate responsibilities.
 
 # Request Flow
 
+```
  Client Request
       │
       ▼
@@ -86,6 +87,7 @@ Repository Layer
       │
       ▼
    Database
+```
 
 ---
 
